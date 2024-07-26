@@ -74,6 +74,13 @@ Repeat a section of code for a number of times
 8
 9
 10
+> 10 for i = 1 to 10 step 2
+> run
+1
+3
+5
+7
+9
 ```
 
 ### gosub
