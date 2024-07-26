@@ -12,9 +12,13 @@ ClifferBasic is a sample program for the Cliffer CLI library that implements a v
 
 ## Roadmap
 
-- Add an `input` command
-- Add support for arrays via the `dim` command
-- Extend built-in help to show more of the syntax of the BASIC commands
+- Add an `input` command.
+- Add support for arrays via the `dim` command.
+- Add `data` and `read` commands.
+- Implement `:` command separator.
+- Add structured-programming constructs like `while`/`wend`.
+- Add support for float variables (`x!`). Double, int, and string are currently supported.
+- Extend built-in help to show more of the syntax of the BASIC commands.
 
 ## Known issues
 
@@ -131,7 +135,26 @@ All is well again
 ```
 
 ### let
-Assign a value to a variable.
+Assign a value to a variable. Default data type is double if no sigil is provided.
+
+A `%` sigil indicates a double data type.
+
+```basic
+> let x% = 1.23
+```
+
+A `#` sigil indicates an integer data type.
+
+```basic
+> let x# = 1
+```
+
+A `$` sigil indicates an string data type.
+
+```basic
+> let x$ = "Hello, World!"
+```
+
 ```basic
 > let x = 5.5
 > print x
