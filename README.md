@@ -14,6 +14,7 @@ ClifferBasic is a sample program for the Cliffer CLI library that implements a v
 
 - Add an `input` command
 - Add support for arrays via the `dim` command
+- Extend built-in help to show more of the syntax of the BASIC commands
 
 ## Known issues
 
@@ -236,6 +237,9 @@ Run the program currently in memory.
 > 10 print "Hello, World!"
 > 20 end
 > run
+Hello, World!
+> save "hello.bas"
+> run "hello.bas"
 Hello, World!
 ```
 
