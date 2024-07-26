@@ -8,7 +8,16 @@ ClifferBasic is a sample program for the Cliffer CLI library that implements a v
 - Interactive REPL for executing BASIC-like commands.
 - Supports variable assignment and arithmetic operations.
 - Commands for printing, listing, saving, and loading programs.
-- Extensible command structure using the Cliffer CLI library.
+- Extensible command structure using the [Cliffer CLI library](https://github.com/paulmooreparks/Cliffer).
+
+## Roadmap
+
+- Add an `input` command
+- Add support for arrays via the `dim` command
+
+## Known issues
+
+- Most BASIC commands will only work inside the REPL and not necessarily from the shell command line. This is an issue in Cliffer.
 
 ## Commands
 
