@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ClifferBasic": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\paul\\source\\repos\\Cliffer\\ClifferBasic\\Samples"
+    }
+  }
+}
