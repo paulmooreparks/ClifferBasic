@@ -29,7 +29,7 @@ Hello, World!
 
 - Interactive REPL for executing BASIC-like commands.
 - Supports variable assignment and arithmetic operations.
-- Commands for printing, listing, saving, and loading programs.
+- Commands for listing, saving, and loading programs.
 - Extensible command structure using the [Cliffer CLI library](https://github.com/paulmooreparks/Cliffer).
 
 ## Roadmap
