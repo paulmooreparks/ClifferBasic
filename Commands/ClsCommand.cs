@@ -3,7 +3,7 @@
 namespace ClifferBasic.Commands;
 
 [Command("cls", "Clear the screen")]
-internal class ClsMethod {
+internal class ClsCommand {
     public int Execute() {
         Console.Clear();
         return Result.Success;
