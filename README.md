@@ -1,7 +1,29 @@
 
 # ClifferBasic
 
-ClifferBasic is a sample program for the Cliffer CLI library that implements a very simple BASIC interpreter environment as a REPL (Read-Eval-Print Loop). This project demonstrates the usage of the Cliffer CLI library to build a custom command-line application with an interactive BASIC-like language interpreter.
+ClifferBasic is a sample program for the [Cliffer CLI library](https://github.com/paulmooreparks/Cliffer) that implements a very simple BASIC interpreter environment as a REPL (Read-Eval-Print Loop). 
+This project demonstrates the usage of the Cliffer CLI library to build a custom command-line application with an interactive BASIC-like language interpreter.
+
+## Usage
+To use ClifferBasic as a REPL, similar to a Commodore 64 or Apple ][ environment, just run the ClifferBasic executable.
+
+```text
+paul@BARN:~$ clifferbasic
+Cliffer Basic
+bye, exit, goodbye  Exit the application
+help, ?             Show help and usage information
+
+> print "Hello, World!"
+Hello, World!
+>
+```
+
+You may run saved programs directly from the command line as well.
+
+```text
+paul@BARN:~$ clifferbasic run "hello.bas"
+Hello, World!
+```
 
 ## Features
 
