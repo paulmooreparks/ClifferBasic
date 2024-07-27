@@ -16,7 +16,11 @@ internal class ClifferBasic {
 
         Utility.SetServiceProvider(cli.ServiceProvider);
 
-        ClifferExitHandler.OnExit += () => {
+        ClifferEventHandler.OnExit += () => { };
+        ClifferEventHandler.OnPreprocessArgs += (args) => {
+            if (args is not null && args.Length > 0) {
+                args[0] = args[0].ToLower();
+            }
         };
 
         return await cli.RunAsync(args);

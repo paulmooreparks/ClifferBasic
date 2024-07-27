@@ -25,9 +25,11 @@ internal class BasicReplContext : Cliffer.DefaultReplContext {
     }
 
     public override Task<int> RunAsync(Command command, string[] args) {
-        if (args.Length > 1 && int.TryParse(args[0], out int lineNumber)) {
-            _programService.SetLine(lineNumber, args.Skip(1).ToArray());
-            return Task.FromResult(Result.Success);
+        if (args.Length > 1) {
+            if (int.TryParse(args[0], out int lineNumber)) {
+                _programService.SetLine(lineNumber, args.Skip(1).ToArray());
+                return Task.FromResult(Result.Success);
+            }
         }
 
         return base.RunAsync(command, args);

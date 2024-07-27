@@ -32,6 +32,19 @@ Hello, World!
 - Commands for listing, saving, and loading programs.
 - Extensible command structure using the [Cliffer CLI library](https://github.com/paulmooreparks/Cliffer).
 
+## Recent Changes
+### 27 July 2024 
+Commands are now case insensitive.
+
+```basic
+> print "Hello"
+Hello
+> PRINT "from"
+from
+> Print "ClifferBasic"
+ClifferBasic
+```
+
 ## Roadmap
 
 - Add an `input` command.
