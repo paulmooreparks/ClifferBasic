@@ -36,6 +36,7 @@ internal class RunCommand {
 
         while (programService.Next(out var programLine)) {
             var tokens = programLine.Tokens;
+            tokens[0] = tokens[0].ToLower();
             var parseResult = context.Parser.Parse(tokens);
 
             if (parseResult != null) {

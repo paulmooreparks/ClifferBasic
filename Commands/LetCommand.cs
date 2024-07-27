@@ -17,11 +17,6 @@ internal class LetCommand {
             return Result.Error;
         }
 
-        if (args.Count() == 1) {
-            Console.Error.WriteLine("Error: Not enough parameters");
-            return Result.Error;
-        }
-
         var expression = expressionBuilder.BuildExpression(args);
 
         if (expression is BinaryExpression binaryExpression && binaryExpression.Operator.Lexeme == "=") {

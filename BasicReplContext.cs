@@ -32,6 +32,7 @@ internal class BasicReplContext : Cliffer.DefaultReplContext {
             }
         }
 
+        ClifferEventHandler.PreprocessArgs(args);
         return base.RunAsync(command, args);
     }
 }
