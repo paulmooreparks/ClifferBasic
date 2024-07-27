@@ -98,7 +98,7 @@ internal class Tokenizer {
     };
 
     private bool IsConstant(string compare, out TokenType tokenType) {
-        return Constants.TryGetValue(compare, out tokenType);
+        return Constants.TryGetValue(compare.ToLower(), out tokenType);
     }
 
     internal IEnumerable<Token> Tokenize(string input) {
