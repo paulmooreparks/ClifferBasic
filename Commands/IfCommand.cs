@@ -16,7 +16,8 @@ internal class IfCommand {
         IEnumerable<string> args,
         InvocationContext context,
         ExpressionBuilder expressionBuilder,
-        VariableStore variableStore
+        VariableStore variableStore, 
+        ProgramService programService
         ) 
     {
         var expression = expressionBuilder.BuildExpression(args);
@@ -30,7 +31,11 @@ internal class IfCommand {
                 if (expression is ThenExpression) {
                     expression = expressionBuilder.BuildExpression();
 
-                    if (expression is CommandExpression commandExpression) {
+                    if (expression is NumberExpression numberExpression) {
+                        var lineNumber = numberExpression.ToInt();
+                        programService.Goto(lineNumber, out var programLine);
+                    }
+                    else if (expression is CommandExpression commandExpression) {
                         var parseResult = context.Parser.Parse(commandExpression.Args);
 
                         if (parseResult != null) {

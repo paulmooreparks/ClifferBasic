@@ -89,7 +89,7 @@ internal class Tokenizer {
     };
 
     private bool IsKeyword(string compare, out TokenType tokenType) {
-        return Keywords.TryGetValue(compare, out tokenType);
+        return Keywords.TryGetValue(compare.ToLower(), out tokenType);
     }
 
     private readonly Dictionary<string, TokenType> Constants = new Dictionary<string, TokenType>() {
