@@ -85,14 +85,14 @@ internal class TokenParser {
     }
 
     internal SyntaxElement Comparison() {
-        SyntaxElement element = Term();
+        SyntaxElement element = List();
 
         if (element is BasicExpression left) {
             while (Peek?.Type == TokenType.GreaterThan || Peek?.Type == TokenType.GreaterThanOrEqual ||
                 Peek?.Type == TokenType.LessThan || Peek?.Type == TokenType.LessThanOrEqual) {
                 Token op = Peek;
                 Advance();
-                element = Term();
+                element = List();
 
                 if (element is BasicExpression right) {
                     element = new BinaryExpression(left, op, right);
@@ -101,6 +101,31 @@ internal class TokenParser {
                     throw new InvalidOperationException("Error: Expected expression");
                 }
             }
+        }
+
+        return element;
+    }
+
+    internal SyntaxElement List() {
+        SyntaxElement element = Term();
+
+        if (element is BasicExpression expression && Peek?.Type == TokenType.Comma) {
+            var list = new List<BasicExpression>();
+            list.Add(expression);
+
+            while (Peek?.Type == TokenType.Comma) {
+                Advance();
+                element = Term();
+
+                if (element is BasicExpression expressionNext) {
+                    list.Add(expressionNext);
+                }
+                else {
+                    throw new InvalidOperationException("Error: Expected expression");
+                }
+            }
+
+            return new ListExpression(list);
         }
 
         return element;

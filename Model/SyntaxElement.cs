@@ -289,6 +289,24 @@ internal class UnaryExpression : BasicExpression {
     }
 }
 
+internal class ListExpression : BasicExpression {
+    internal List<BasicExpression> Expressions { get; }
+
+    public ListExpression(List<BasicExpression> expressions) {
+        Expressions = expressions;
+    }
+
+    internal override object Evaluate(VariableStore variableStore) {
+        var results = new List<object>();
+
+        foreach (var expression in Expressions) {
+            results.Add(expression.Evaluate(variableStore));
+        }
+
+        return results;
+    }
+}
+
 internal class BinaryExpression : BasicExpression {
     internal BasicExpression Left { get; }
     internal Token Operator { get; }

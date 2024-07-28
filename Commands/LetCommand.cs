@@ -5,7 +5,7 @@ using ClifferBasic.Services;
 namespace ClifferBasic.Commands;
 
 [Command("let", "Assign a value to a variable")]
-[Argument(typeof(IEnumerable<string>), "args", "The assignment element", Cliffer.ArgumentArity.ZeroOrMore)]
+[Argument(typeof(IEnumerable<string>), "args", "The assignment variable", Cliffer.ArgumentArity.ZeroOrMore)]
 internal class LetCommand {
     public int Execute(
         IEnumerable<string> args,

@@ -36,6 +36,7 @@ internal enum TokenType {
     Assignment,
     LeftParenthesis,
     RightParenthesis,
+    Comma,
     Equal,
     LessThan,
     LessThanOrEqual,

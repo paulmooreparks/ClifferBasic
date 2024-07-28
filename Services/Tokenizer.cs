@@ -148,6 +148,9 @@ internal class Tokenizer {
                     case ')':
                         tokenList.Add(new Token(CurrentString, TokenType.RightParenthesis));
                         break;
+                    case ',':
+                        tokenList.Add(new Token(CurrentString, TokenType.Comma));
+                        break;
                     case '+':
                         tokenList.Add(new Token(CurrentString, TokenType.Plus));
                         break;

@@ -1,0 +1,5 @@
+10 print "ENTER TEMPERATURE IN CELSIUS" ;
+20 input C
+30 let F=32+(9*C)/5
+40 print "TEMPERATURE IN FAHRENHEIT IS " ;F
+50 end
