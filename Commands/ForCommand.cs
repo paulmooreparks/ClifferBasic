@@ -54,7 +54,7 @@ internal class ForCommand {
                 return Result.Error;
             }
 
-            element = syntaxParser.ParseArgs();
+            element = syntaxParser.Continue();
 
             if (element is ToKeyword toExpression) {
                 var comparisonResult = toExpression.ToValue.Evaluate(variableStore);
@@ -76,7 +76,7 @@ internal class ForCommand {
 
                 double comparisonValue = (double)comparisonResult;
 
-                element = syntaxParser.ParseArgs();
+                element = syntaxParser.Continue();
 
                 if (element is StepExpression stepExpression) {
                     var step = stepExpression.StepValue;

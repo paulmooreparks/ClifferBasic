@@ -21,20 +21,28 @@ internal class PrintCommand : BasicCommand {
 
         var element = syntaxParser.ParseArgs(args);
 
-        if (element is BasicExpression expression) {
-            try {
-                var result = expression.Evaluate(variableStore);
-                Console.WriteLine(result);
-                return Result.Success;
+        while (element is not null) {
+            if (element is BasicExpression expression) {
+                try {
+                    var result = expression.Evaluate(variableStore);
+                    Console.Write(result);
+                    element = syntaxParser.Continue();
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                    return Result.Error;
+                }
             }
-            catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-                return Result.Error;
+
+            if (element is LineConcatOperator) {
+                element = syntaxParser.Continue();
+            }
+            else {
+                Console.WriteLine();
             }
         }
 
-        Console.Error.WriteLine("Invalid element");
-        return Result.Error;
+        return Result.Success;
     }
 }
 

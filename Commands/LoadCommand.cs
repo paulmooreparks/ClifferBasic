@@ -14,7 +14,7 @@ internal class LoadCommand {
         ProgramService programService
         ) 
     {
-        var element = syntaxParser.ParseArgs(filename);
+        var element = syntaxParser.ParseArg(filename);
 
         try {
             if (element is BasicExpression expression) {
@@ -32,13 +32,12 @@ internal class LoadCommand {
                     }
                 }
             }
-
-            Console.WriteLine($"Invalid filename {filename}");
-            return Result.Error;
         }
         catch (Exception) {
-            Console.WriteLine($"Invalid filename {filename}");
-            return Result.Error;
+            // TODO: Route this to optional debug logging?
         }
+
+        Console.WriteLine($"Invalid filename {filename}");
+        return Result.Error;
     }
 }

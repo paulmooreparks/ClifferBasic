@@ -27,10 +27,10 @@ internal class IfCommand {
             var testResult = expression.Evaluate(variableStore);
 
             if (Convert.ToBoolean(testResult)) {
-                element = syntaxParser.ParseArgs();
+                element = syntaxParser.Continue();
 
                 if (element is ThenExpression) {
-                    element = syntaxParser.ParseArgs();
+                    element = syntaxParser.Continue();
 
                     if (element is NumericExpression numberExpression) {
                         var lineNumber = numberExpression.ToInt();

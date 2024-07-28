@@ -26,13 +26,13 @@ internal class SyntaxParser {
         return expression;
     }
 
-    internal SyntaxElement? ParseArgs(string arg) {
+    internal SyntaxElement? ParseArg(string arg) {
         var tokens = _tokenizer.Tokenize(arg);
         var expression = _tokenParser.Parse(tokens);
         return expression;
     }
 
-    internal SyntaxElement? ParseArgs() {
+    internal SyntaxElement? Continue() {
         var expression = _tokenParser.Parse();
         return expression;
     }

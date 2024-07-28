@@ -14,7 +14,7 @@ internal class SaveCommand {
         ProgramService programService
         ) 
     {
-        var element = syntaxParser.ParseArgs(filename);
+        var element = syntaxParser.ParseArg(filename);
 
         try {
             if (element is BasicExpression expression) {

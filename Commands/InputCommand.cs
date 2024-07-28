@@ -29,11 +29,11 @@ internal class InputCommand {
         if (element is StringExpression stringExpression) {
             var prompt = stringExpression.Value;
             Console.Write(prompt);
-            element = syntaxParser.ParseArgs();
+            element = syntaxParser.Continue();
         }
 
         if (element is LineConcatOperator) {
-            element = syntaxParser.ParseArgs();
+            element = syntaxParser.Continue();
         }
         else {
             Console.WriteLine();
