@@ -33,8 +33,12 @@ Hello, World!
 - Extensible command structure using the [Cliffer CLI library](https://github.com/paulmooreparks/Cliffer).
 
 ## Recent Changes
+### 28 July 2024
+* Added input, chgdir, chgvol, listdir, and printdir commands.
+* Added line-concatenation operator (;) to input and print commands.
+
 ### 27 July 2024 
-Commands are now case insensitive.
+* Commands are now case insensitive.
 
 ```basic
 > print "Hello"
@@ -47,7 +51,6 @@ ClifferBasic
 
 ## Roadmap
 
-- Add an `input` command.
 - Add support for arrays via the `dim` command.
 - Add `data` and `read` commands.
 - Implement `:` command separator.
@@ -66,6 +69,32 @@ Clear the screen
 
 ```basic
 > cls
+```
+
+### chgdir
+Change the current directory
+
+```basic
+> chgdir "/home/mydir"
+> printdir
+/home/mydir
+> listdir
+<DIR> .config
+<DIR> repos
+     hello.bas
+```
+
+### chgvol
+Change the current volume
+
+```basic
+> chgvol "d:"
+> printdir
+D:\
+> listdir
+<DIR> MyStuff
+<DIR> Source
+     hello.bas
 ```
 
 ### delete
@@ -169,6 +198,16 @@ All is well
 All is well again
 ```
 
+### input
+Accept input from the user
+
+```basic
+> input "What is your name"; name$
+What is your name? Slartibartfast
+> print name$
+Slartibartfast
+```
+
 ### let
 Assign a value to a variable. Default data type is double if no sigil is provided.
 
@@ -210,6 +249,19 @@ List the current program in memory.
 > list
 10 print "Hello, World!"
 20 end
+```
+
+### listdir
+List the contents of the current directory
+
+```basic
+> chgdir "/home/mydir"
+> printdir
+/home/mydir
+> listdir
+<DIR> .config
+<DIR> repos
+     hello.bas
 ```
 
 ### load
@@ -267,6 +319,16 @@ Hello, World!
 > print z$
 foo
 ```
+
+### printdir
+Print the name of the current directory.
+
+```basic
+> chgdir "/home/mydir"
+> printdir
+/home/mydir
+```
+
 
 ### rem
 Add a comment to the program.
