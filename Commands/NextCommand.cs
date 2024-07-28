@@ -16,9 +16,8 @@ namespace ClifferBasic.Commands;
 internal class NextCommand {
     public int Execute(
         string identifier,
-        ProgramService programService,
-        ExpressionBuilder expressionBuilder,
-        VariableStore variableStore) {
+        ProgramService programService
+        ) {
 
         programService.ContinueForLoop(identifier);
         return Result.Success;

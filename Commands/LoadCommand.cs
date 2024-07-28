@@ -1,4 +1,5 @@
 ﻿using Cliffer;
+using ClifferBasic.Model;
 using ClifferBasic.Services;
 
 namespace ClifferBasic.Commands;
@@ -8,15 +9,15 @@ namespace ClifferBasic.Commands;
 internal class LoadCommand {
     public int Execute(
         string filename,
-        ExpressionBuilder expressionBuilder,
+        SyntaxParser syntaxParser,
         VariableStore variableStore,
         ProgramService programService
         ) 
     {
-        var expression = expressionBuilder.BuildExpression(filename);
+        var element = syntaxParser.ParseArgs(filename);
 
         try {
-            if (expression is not null) {
+            if (element is BasicExpression expression) {
                 var eval = expression.Evaluate(variableStore);
 
                 if (eval is not null) {

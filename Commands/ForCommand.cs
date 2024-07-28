@@ -16,12 +16,12 @@ internal class ForCommand {
         IEnumerable<string> args,
         ProgramService programService,
         InvocationContext context,
-        ExpressionBuilder expressionBuilder,
+        SyntaxParser syntaxParser,
         VariableStore variableStore) {
 
-        var expression = expressionBuilder.BuildExpression(args);
+        var element = syntaxParser.ParseArgs(args);
 
-        if (expression is not null) {
+        if (element is BasicExpression expression) {
             string identifier = string.Empty;
 
             if (expression is BinaryExpression binaryExpression && binaryExpression.Operator.Lexeme == "=") {
@@ -54,10 +54,10 @@ internal class ForCommand {
                 return Result.Error;
             }
 
-            expression = expressionBuilder.BuildExpression();
+            element = syntaxParser.ParseArgs();
 
-            if (expression is ToExpression toExpression) {
-                var comparisonResult = toExpression.ToValue;
+            if (element is ToKeyword toExpression) {
+                var comparisonResult = toExpression.ToValue.Evaluate(variableStore);
                 double incrementAmount = 1;
                 double incrementValue = 0;
 
@@ -76,9 +76,9 @@ internal class ForCommand {
 
                 double comparisonValue = (double)comparisonResult;
 
-                expression = expressionBuilder.BuildExpression();
+                element = syntaxParser.ParseArgs();
 
-                if (expression is StepExpression stepExpression) {
+                if (element is StepExpression stepExpression) {
                     var step = stepExpression.StepValue;
                     incrementAmount = step;
                 }

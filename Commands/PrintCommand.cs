@@ -6,11 +6,11 @@ using ClifferBasic.Services;
 namespace ClifferBasic.Commands;
 
 [Command("print", "Print text to the screen")]
-[Argument(typeof(IEnumerable<string>), "args", "The text to print or expression to evaluate", Cliffer.ArgumentArity.ZeroOrMore)]
+[Argument(typeof(IEnumerable<string>), "args", "The text to print or element to evaluate", Cliffer.ArgumentArity.ZeroOrMore)]
 internal class PrintCommand : BasicCommand {
     public int Execute(
         IEnumerable<string> args,
-        ExpressionBuilder expressionBuilder,
+        SyntaxParser syntaxParser,
         VariableStore variableStore
         ) 
     {
@@ -19,9 +19,9 @@ internal class PrintCommand : BasicCommand {
             return Result.Success;
         }
 
-        var expression = expressionBuilder.BuildExpression(args);
+        var element = syntaxParser.ParseArgs(args);
 
-        if (expression is not null) {
+        if (element is BasicExpression expression) {
             try {
                 var result = expression.Evaluate(variableStore);
                 Console.WriteLine(result);
@@ -33,7 +33,7 @@ internal class PrintCommand : BasicCommand {
             }
         }
 
-        Console.Error.WriteLine("Invalid expression");
+        Console.Error.WriteLine("Invalid element");
         return Result.Error;
     }
 }

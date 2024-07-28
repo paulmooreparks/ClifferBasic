@@ -5,11 +5,11 @@ using ClifferBasic.Services;
 namespace ClifferBasic.Commands;
 
 [Command("let", "Assign a value to a variable")]
-[Argument(typeof(IEnumerable<string>), "args", "The assignment expression", Cliffer.ArgumentArity.ZeroOrMore)]
+[Argument(typeof(IEnumerable<string>), "args", "The assignment element", Cliffer.ArgumentArity.ZeroOrMore)]
 internal class LetCommand {
     public int Execute(
         IEnumerable<string> args,
-        ExpressionBuilder expressionBuilder,
+        SyntaxParser syntaxParser,
         VariableStore variableStore) {
 
         if (args.Count() == 0) {
@@ -17,9 +17,9 @@ internal class LetCommand {
             return Result.Error;
         }
 
-        var expression = expressionBuilder.BuildExpression(args);
+        var element = syntaxParser.ParseArgs(args);
 
-        if (expression is BinaryExpression binaryExpression && binaryExpression.Operator.Lexeme == "=") {
+        if (element is BinaryExpression binaryExpression && binaryExpression.Operator.Lexeme == "=") {
             if (binaryExpression.Left is DoubleVariableExpression doubleVariable) {
                 var variableValue = binaryExpression.Right.Evaluate(variableStore);
                 variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(variableValue));
@@ -40,7 +40,7 @@ internal class LetCommand {
             return Result.Error;
         }
 
-        Console.Error.WriteLine($"Error: Invalid assignment expression");
+        Console.Error.WriteLine($"Error: Invalid assignment element");
         return Result.Error;
     }
 }

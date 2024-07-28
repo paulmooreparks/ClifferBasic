@@ -14,11 +14,11 @@ using ClifferBasic.Commands;
 namespace ClifferBasic.Extensions;
 internal static class CommandExtensions {
     public static int Implementation(this Command command, 
-        ExpressionBuilder expressionBuilder, 
+        SyntaxParser syntaxParser, 
         VariableStore variableStore, 
-        Expression? expression = null
+        SyntaxElement? expression = null
         ) 
     {
-        return command.Implementation(expressionBuilder, variableStore, expression);
+        return command.Implementation(syntaxParser, variableStore, expression);
     }
 }

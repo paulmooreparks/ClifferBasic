@@ -166,6 +166,9 @@ internal class Tokenizer {
                     case '=':
                         tokenList.Add(new Token(CurrentString, TokenType.Equal));
                         break;
+                    case ';':
+                        tokenList.Add(new Token(CurrentString, TokenType.Semicolon));
+                        break;
                     case '>':
                         if (Peek == '=') {
                             Expand();

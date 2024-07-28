@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.Reflection.Metadata;
 
 using Cliffer;
 
@@ -15,27 +16,27 @@ internal class IfCommand {
     public async Task<int> Execute(
         IEnumerable<string> args,
         InvocationContext context,
-        ExpressionBuilder expressionBuilder,
+        SyntaxParser syntaxParser,
         VariableStore variableStore, 
         ProgramService programService
         ) 
     {
-        var expression = expressionBuilder.BuildExpression(args);
+        var element = syntaxParser.ParseArgs(args);
 
-        if (expression is not null) {
+        if (element is BasicExpression expression) {
             var testResult = expression.Evaluate(variableStore);
 
             if (Convert.ToBoolean(testResult)) {
-                expression = expressionBuilder.BuildExpression();
+                element = syntaxParser.ParseArgs();
 
-                if (expression is ThenExpression) {
-                    expression = expressionBuilder.BuildExpression();
+                if (element is ThenExpression) {
+                    element = syntaxParser.ParseArgs();
 
-                    if (expression is NumberExpression numberExpression) {
+                    if (element is NumericExpression numberExpression) {
                         var lineNumber = numberExpression.ToInt();
                         programService.Goto(lineNumber, out var programLine);
                     }
-                    else if (expression is CommandExpression commandExpression) {
+                    else if (element is CommandExpression commandExpression) {
                         var parseResult = context.Parser.Parse(commandExpression.Args);
 
                         if (parseResult != null) {

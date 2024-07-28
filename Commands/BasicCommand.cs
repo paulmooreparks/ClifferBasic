@@ -11,9 +11,9 @@ using ClifferBasic.Model;
 namespace ClifferBasic.Commands;
 internal class BasicCommand {
     internal virtual int Implementation(
-        ExpressionBuilder expressionBuilder,
+        SyntaxParser syntaxParser,
         VariableStore variableStore,
-        Expression? expression = null
+        SyntaxElement? expression = null
         ) 
     {
         return Result.Success;

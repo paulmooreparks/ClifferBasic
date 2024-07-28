@@ -59,6 +59,7 @@ internal class CommandSplitter {
                             Advance();
                             yield return CurrentToken();
                             startTokenIndex = pos;
+                            --pos;
                             seekingQuote = Boundary.QuoteStart;
                             break;
 

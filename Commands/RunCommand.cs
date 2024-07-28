@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.Runtime.ExceptionServices;
 
 using Cliffer;
 using ClifferBasic.Services;
@@ -29,6 +30,14 @@ internal class RunCommand {
 
     public async Task<int> Execute(string filename, CommandSplitter splitter, InvocationContext context, ProgramService programService) {
         if (!string.IsNullOrEmpty(filename)) {
+            if (filename[0] == '\"') {
+                filename = filename[1..];
+            }
+
+            if (filename.Last() == '\"') {
+                filename = filename[..^1];
+            }
+
             programService.Load(filename);
         }
 

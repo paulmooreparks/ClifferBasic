@@ -51,6 +51,7 @@ internal enum TokenType {
     DollarSign,
     Hash,
     BackTick,
+    Semicolon,
     And,
     Or,
     Not,
