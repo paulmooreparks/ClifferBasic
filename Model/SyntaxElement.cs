@@ -69,6 +69,16 @@ internal class VariableExpression : BasicExpression {
     }
 }
 
+internal class ArrayVariableExpression : VariableExpression {
+    internal VariableExpression VariableExpression { get; }
+    internal ListExpression DimensionExpression { get; }
+
+    internal ArrayVariableExpression(VariableExpression variableExpression, ListExpression dimensionExpression) : base(variableExpression.Name) {
+        VariableExpression = variableExpression;
+        DimensionExpression = dimensionExpression;
+    }
+}
+
 internal class IntegerVariableExpression : VariableExpression {
     internal IntegerVariableExpression(string name) : base(name) { }
 
@@ -258,10 +268,10 @@ internal class StringAssignmentExpression : BasicExpression {
     }
 }
 
-internal class GroupExpression : BasicExpression {
+internal class ParentheticalExpression : BasicExpression {
     private BasicExpression Enclosed { get; }
 
-    internal GroupExpression(BasicExpression enclosed) { 
+    internal ParentheticalExpression(BasicExpression enclosed) { 
         Enclosed = enclosed; 
     }
 
@@ -322,10 +332,10 @@ internal class BinaryExpression : BasicExpression {
         BasicExpression result =  Left switch {
             null => throw new Exception($"Invalid type: {Left}"),
             BinaryExpression lvalue => new BinaryExpression(new NumericExpression(lvalue.Evaluate(variableStore)), Operator, Right),
-            GroupExpression lvalue => new BinaryExpression(new NumericExpression(lvalue.Evaluate(variableStore)), Operator, Right),
+            ParentheticalExpression lvalue => new BinaryExpression(new NumericExpression(lvalue.Evaluate(variableStore)), Operator, Right),
             NumericExpression lvalue => Right switch {
                 BinaryExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
-                GroupExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+                ParentheticalExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
                 NumericExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToDouble() + rvalue.ToDouble()),
                     TokenType.Minus => new NumericExpression(lvalue.ToDouble() - rvalue.ToDouble()),
@@ -369,7 +379,7 @@ internal class BinaryExpression : BasicExpression {
             },
             IntegerVariableExpression lvalue => Right switch {
                 BinaryExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
-                GroupExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+                ParentheticalExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
                 NumericExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToInt(variableStore) + rvalue.ToInt()),
                     TokenType.Minus => new NumericExpression(lvalue.ToInt(variableStore) - rvalue.ToInt()),
@@ -418,7 +428,7 @@ internal class BinaryExpression : BasicExpression {
             },
             DoubleVariableExpression lvalue => Right switch {
                 BinaryExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
-                GroupExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+                ParentheticalExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
                 NumericExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToDouble(variableStore) + rvalue.ToDouble()),
                     TokenType.Minus => new NumericExpression(lvalue.ToDouble(variableStore) - rvalue.ToDouble()),

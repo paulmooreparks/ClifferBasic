@@ -50,3 +50,51 @@ internal class StringVariable : Variable {
     public override string? ToString() => Value;
 }
 
+internal class ArrayVariable : Variable {
+    internal List<int> Dimensions { get; }
+    internal Array Values { get; }
+
+    internal ArrayVariable(Type type, List<int> dimensions) : base(type) { 
+        Dimensions = dimensions;
+        Values = Array.CreateInstance(type, dimensions.ToArray());
+    }
+
+    internal virtual object GetVariable(params int[] indices) {
+        return Values.GetValue(indices)!;
+    }
+
+    internal void SetVariable(object variable, params int[] indices) {
+        Values.SetValue(variable, indices);
+    }
+}
+
+internal class DoubleArrayVariable : ArrayVariable {
+    internal DoubleArrayVariable(List<int> dimensions) : base(typeof(DoubleVariable), dimensions) {
+    }
+
+    internal double GetValue(params int[] indices) {
+        var variable = (DoubleVariable)base.GetVariable(indices);
+        return variable.ToDouble();
+    }
+}
+
+internal class IntegerArrayVariable : ArrayVariable {
+    internal IntegerArrayVariable(List<int> dimensions) : base(typeof(IntegerVariable), dimensions) {
+    }
+
+    internal int GetValue(params int[] indices) {
+        var variable = (IntegerVariable)base.GetVariable(indices);
+        return variable.ToInt();
+    }
+}
+
+internal class StringArrayVariable : ArrayVariable {
+    internal StringArrayVariable(List<int> dimensions) : base(typeof(StringVariable), dimensions) {
+    }
+
+    internal string GetValue(params int[] indices) {
+        var variable = (StringVariable)base.GetVariable(indices);
+        return variable.ToString() ?? string.Empty;
+    }
+}
+

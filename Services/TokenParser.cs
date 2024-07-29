@@ -98,7 +98,7 @@ internal class TokenParser {
                     element = new BinaryExpression(left, op, right);
                 }
                 else {
-                    throw new InvalidOperationException("Error: Expected expression");
+                    throw new InvalidOperationException("Error: Expected dimensionExpression");
                 }
             }
         }
@@ -110,8 +110,9 @@ internal class TokenParser {
         SyntaxElement element = Term();
 
         if (element is BasicExpression expression && Peek?.Type == TokenType.Comma) {
-            var list = new List<BasicExpression>();
-            list.Add(expression);
+            var list = new List<BasicExpression> {
+                expression
+            };
 
             while (Peek?.Type == TokenType.Comma) {
                 Advance();
@@ -121,7 +122,7 @@ internal class TokenParser {
                     list.Add(expressionNext);
                 }
                 else {
-                    throw new InvalidOperationException("Error: Expected expression");
+                    throw new InvalidOperationException("Error: Expected dimensionExpression");
                 }
             }
 
@@ -144,7 +145,7 @@ internal class TokenParser {
                     element = new BinaryExpression(left, op, right);
                 }
                 else {
-                    throw new InvalidOperationException("Error: Expected expression");
+                    throw new InvalidOperationException("Error: Expected dimensionExpression");
                 }
             }
         }
@@ -165,7 +166,7 @@ internal class TokenParser {
                     element = new BinaryExpression(left, op, right);
                 }
                 else {
-                    throw new InvalidOperationException("Error: Expected expression");
+                    throw new InvalidOperationException("Error: Expected dimensionExpression");
                 }
             }
         }
@@ -180,6 +181,59 @@ internal class TokenParser {
             SyntaxElement right = Unary();
             return new UnaryExpression(op, right);
         };
+
+        return Variable();
+    }
+
+    internal SyntaxElement Variable() {
+        if (Peek?.Type == TokenType.IntegerVariableName || Peek?.Type == TokenType.DoubleVariableName || Peek?.Type == TokenType.StringVariableName) {
+            var tokenType = Peek?.Type;
+            var variableName = Peek?.Literal!.ToString()!;
+            Advance();
+
+            if (Peek?.Type == TokenType.LeftParenthesis) {
+                Advance();
+                SyntaxElement element = Element();
+                Consume(TokenType.RightParenthesis, "Expected closing parenthesis");
+                ListExpression? listExpression = null;
+
+                if (element is ListExpression dimensionExpression) {
+                    listExpression = dimensionExpression;
+                }
+                else if (element is NumericExpression numericExpression) {
+                    var list = new List<BasicExpression> {
+                        numericExpression
+                    };
+                    listExpression = new ListExpression(list);
+                }
+
+                if (listExpression is not null) {
+                    if (tokenType == TokenType.IntegerVariableName) {
+                        return new ArrayVariableExpression(new IntegerVariableExpression(variableName), listExpression);
+                    }
+
+                    if (tokenType == TokenType.DoubleVariableName) {
+                        return new ArrayVariableExpression(new DoubleVariableExpression(variableName), listExpression);
+                    }
+
+                    if (tokenType == TokenType.StringVariableName) {
+                        return new ArrayVariableExpression(new StringVariableExpression(variableName), listExpression);
+                    }
+                }
+            }
+
+            if (tokenType == TokenType.IntegerVariableName) {
+                return new IntegerVariableExpression(variableName);
+            }
+
+            if (tokenType == TokenType.DoubleVariableName) {
+                return new DoubleVariableExpression(variableName);
+            }
+
+            if (tokenType == TokenType.StringVariableName) {
+                return new StringVariableExpression(variableName);
+            }
+        }
 
         return Primary();
     }
@@ -205,24 +259,6 @@ internal class TokenParser {
             var literal = Peek.Literal!.ToString()!;
             Advance();
             return new StringExpression(literal);
-        }
-
-        if (Peek?.Type == TokenType.IntegerVariableName) {
-            var literal = Peek.Literal!.ToString()!;
-            Advance();
-            return new IntegerVariableExpression(literal);
-        }
-
-        if (Peek?.Type == TokenType.DoubleVariableName) {
-            var literal = Peek.Literal!.ToString()!;
-            Advance();
-            return new DoubleVariableExpression(literal);
-        }
-
-        if (Peek?.Type == TokenType.StringVariableName) {
-            var literal = Peek.Literal!.ToString()!;
-            Advance();
-            return new StringVariableExpression(literal);
         }
 
         if (Peek?.Type == TokenType.Then) {
@@ -282,7 +318,7 @@ internal class TokenParser {
             Consume(TokenType.RightParenthesis, "Expected closing parenthesis");
 
             if (element is BasicExpression expression) {
-                return new GroupExpression(expression);
+                return new ParentheticalExpression(expression);
             }
         }
 
