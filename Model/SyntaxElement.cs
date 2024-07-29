@@ -77,6 +77,10 @@ internal class ArrayVariableExpression : VariableExpression {
         VariableExpression = variableExpression;
         DimensionExpression = dimensionExpression;
     }
+
+    internal override object Evaluate(VariableStore variableStore) {
+        return variableStore.GetVariable(Name) ?? false;
+    }
 }
 
 internal class IntegerVariableExpression : VariableExpression {
