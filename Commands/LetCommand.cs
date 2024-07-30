@@ -30,30 +30,39 @@ internal class LetCommand {
 
 
                 if (variable is ArrayVariable arrayVariable) {
-                    var variableItem = arrayVariable.GetVariable(indices);
-                    variableItem.SetValue(variableValue);
+                    if (arrayVariable is DoubleArrayVariable doubleArrayVariable) {
+                        doubleArrayVariable.SetValue(variableValue, indices);
+                        return Result.Success;
+                    }
+                    else if (arrayVariable is IntegerArrayVariable intArrayVariable) {
+                        intArrayVariable.SetValue(variableValue, indices);
+                        return Result.Success;
+                    }
+                    else if (arrayVariable is StringArrayVariable stringArrayVariable) {
+                        stringArrayVariable.SetValue(variableValue, indices);
+                        return Result.Success;
+                    }
+                    else {
+                        // TODO: Error
+                    }
                 }
                 else {
-                    // TODO: Error
+                    if (variableExpression is DoubleVariableExpression doubleVariable) {
+                        variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(variableValue));
+                        return Result.Success;
+                    }
+                    else if (binaryExpression.Left is IntegerVariableExpression integerVariable) {
+                        variableStore.SetVariable(integerVariable.Name, new IntegerVariable(variableValue));
+                        return Result.Success;
+                    }
+                    else if (binaryExpression.Left is StringVariableExpression stringVariable) {
+                        variableStore.SetVariable(stringVariable.Name, new StringVariable(variableValue));
+                        return Result.Success;
+                    }
                 }
             }
             else if (binaryExpression.Left is VariableExpression leftExpression) {
                 variableExpression = leftExpression;
-            }
-
-            if (variableExpression is not null) {
-                if (variableExpression is DoubleVariableExpression doubleVariable) {
-                    variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(variableValue));
-                    return Result.Success;
-                }
-                else if (binaryExpression.Left is IntegerVariableExpression integerVariable) {
-                    variableStore.SetVariable(integerVariable.Name, new IntegerVariable(variableValue));
-                    return Result.Success;
-                }
-                else if (binaryExpression.Left is StringVariableExpression stringVariable) {
-                    variableStore.SetVariable(stringVariable.Name, new StringVariable(variableValue));
-                    return Result.Success;
-                }
             }
 
             Console.Error.WriteLine($"Error: Left-hand side of assignment must be a variableItem");

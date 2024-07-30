@@ -36,29 +36,60 @@ internal abstract class NumericVariable<T> : ScalarVariable<T> {
 
 internal class BooleanVariable : NumericVariable<bool> {
     internal BooleanVariable(object value) : base(Convert.ToBoolean(value)) { }
-    internal override void SetValue(object value) => Value = Convert.ToBoolean(Value);
+
+    internal BooleanVariable() : base(false) { }
+
+    internal override void SetValue(bool value) {
+        Value = value;
+    }
+
+    internal override void SetValue(object value) {
+        SetValue(Convert.ToBoolean(value));
+    }
 }
 
 internal class IntegerVariable : NumericVariable<int> {
     internal IntegerVariable(object value) : base(Convert.ToInt32(value)) { }
-    internal override void SetValue(object value) => Value = Convert.ToInt32(Value);
+
+    public IntegerVariable() : base(0) { }
+
+    internal override void SetValue(int value) {
+        Value = value;
+    }
+
+    internal override void SetValue(object value) {
+        SetValue(Convert.ToInt32(value));
+    }
 }
 
 internal class DoubleVariable : NumericVariable<double> {
     internal DoubleVariable(object value) : base(Convert.ToDouble(value)) { }
-    internal override void SetValue(object value) => Value = Convert.ToDouble(Value);
+
+    public DoubleVariable() : base(0) { }
+
+    internal override void SetValue(double value) { 
+        Value = value; 
+    }
+
+    internal override void SetValue(object value) {
+        SetValue(Convert.ToDouble(value));
+    }
 }
 
 internal class StringVariable : ScalarVariable<string> {
-    internal StringVariable(string value) : base(value) {
+    internal StringVariable(string value) : base(value) { }
+
+    internal StringVariable(object value) : base(value?.ToString() ?? string.Empty) { }
+
+    public StringVariable() : base(string.Empty) { }
+
+    internal override void SetValue(string value) {
+        Value = value?.ToString() ?? string.Empty;
     }
 
-    internal StringVariable(object value) : base(value?.ToString() ?? string.Empty) {
+    internal override void SetValue(object value) {
+        SetValue(value.ToString() ?? string.Empty);
     }
-
-    internal override void SetValue(object value) => Value = value?.ToString() ?? string.Empty;
-
-    internal override void SetValue(string value) => Value = value;
 
     public override string? ToString() => Value;
 }
@@ -66,18 +97,12 @@ internal class StringVariable : ScalarVariable<string> {
 internal abstract class ArrayVariable : Variable {
     internal List<int> Dimensions { get; }
 
-    internal ArrayVariable(List<int> dimensions) { 
+    internal ArrayVariable(List<int> dimensions) {
         Dimensions = dimensions;
     }
-
-    internal override void SetValue(object value) {
-        throw new NotImplementedException();
-    }
-
-    internal abstract Variable GetVariable(params int[] indices); 
 }
 
-internal abstract class TypedArrayVariable<T> : ArrayVariable where T : Variable {
+internal abstract class TypedArrayVariable<T, U> : ArrayVariable where T : Variable, new() where U : notnull {
     internal Array Values { get; }
 
     internal TypedArrayVariable(List<int> dimensions) : base(dimensions) {
@@ -88,44 +113,68 @@ internal abstract class TypedArrayVariable<T> : ArrayVariable where T : Variable
         Values.SetValue(variable, indices);
     }
 
-    internal override T GetVariable(params int[] indices) {
+    internal void SetValue(U value, params int[] indices) {
+        var variable = GetVariable(indices);
+        variable.SetValue(value);
+        Values.SetValue(variable, indices);
+    }
+
+    internal void SetValue(object value, params int[] indices) {
+        var variable = GetVariable(indices);
+        variable.SetValue(value);
+        Values.SetValue(variable, indices);
+    
+    }
+
+    internal T GetVariable(params int[] indices) {
         var retval = Values.GetValue(indices);
 
         if (retval is not null) {
+            
             return (T)retval;
         }
 
-        throw new IndexOutOfRangeException(nameof(indices));
+        T newvar = new T();
+        SetVariable(newvar, indices);
+        return newvar;
     }
 }
 
-internal class DoubleArrayVariable : TypedArrayVariable<DoubleVariable> {
-    internal DoubleArrayVariable(List<int> dimensions) : base(dimensions) {
-    }
+internal class DoubleArrayVariable : TypedArrayVariable<DoubleVariable, double> {
+    internal DoubleArrayVariable(List<int> dimensions) : base(dimensions) { }
 
     internal double GetValue(params int[] indices) {
         var variable = GetVariable(indices);
         return variable.Value;
     }
+
+    internal override void SetValue(object value) {
+        // var variable = GetVariable(indices);
+        // variable.SetValue(value);
+    }
 }
 
-internal class IntegerArrayVariable : TypedArrayVariable<IntegerVariable> {
-    internal IntegerArrayVariable(List<int> dimensions) : base(dimensions) {
-    }
+internal class IntegerArrayVariable : TypedArrayVariable<IntegerVariable, int> {
+    internal IntegerArrayVariable(List<int> dimensions) : base(dimensions) { }
 
     internal int GetValue(params int[] indices) {
         var variable = (IntegerVariable)base.GetVariable(indices);
         return variable.ToInt();
     }
+    
+    internal override void SetValue(object value) {
+    }
 }
 
-internal class StringArrayVariable : TypedArrayVariable<StringVariable> {
-    internal StringArrayVariable(List<int> dimensions) : base(dimensions) {
-    }
+internal class StringArrayVariable : TypedArrayVariable<StringVariable, string> {
+    internal StringArrayVariable(List<int> dimensions) : base(dimensions) { }
 
     internal string GetValue(params int[] indices) {
         var variable = (StringVariable)base.GetVariable(indices);
         return variable.ToString() ?? string.Empty;
+    }
+
+    internal override void SetValue(object value) {
     }
 }
 

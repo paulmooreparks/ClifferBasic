@@ -79,7 +79,30 @@ internal class ArrayVariableExpression : VariableExpression {
     }
 
     internal override Variable Evaluate(VariableStore variableStore) {
-        return variableStore.GetVariable(Name);
+        var variable = variableStore.GetVariable(VariableExpression.Name);
+        var dimension = DimensionExpression.Evaluate(variableStore);
+
+        if (dimension is List<object> objectList) {
+            List<int> dimensionList = new();
+
+            foreach (var var in objectList) {
+                if (var is double index) {
+                    dimensionList.Add((int)index);
+                }
+            }
+
+            if (variable is DoubleArrayVariable doubleArrayVariable) {
+                return doubleArrayVariable.GetVariable(dimensionList.ToArray());
+            }
+            else if (variable is IntegerArrayVariable intArrayVariable) {
+                return intArrayVariable.GetVariable(dimensionList.ToArray());
+            }
+            else if (variable is StringArrayVariable stringArrayVariable) {
+                return stringArrayVariable.GetVariable(dimensionList.ToArray());
+            }
+        }
+
+        return variable;
     }
 }
 
