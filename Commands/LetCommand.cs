@@ -63,6 +63,19 @@ internal class LetCommand {
             }
             else if (binaryExpression.Left is VariableExpression leftExpression) {
                 variableExpression = leftExpression;
+
+                if (variableExpression is DoubleVariableExpression doubleVariable) {
+                    variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(variableValue));
+                    return Result.Success;
+                }
+                else if (binaryExpression.Left is IntegerVariableExpression integerVariable) {
+                    variableStore.SetVariable(integerVariable.Name, new IntegerVariable(variableValue));
+                    return Result.Success;
+                }
+                else if (binaryExpression.Left is StringVariableExpression stringVariable) {
+                    variableStore.SetVariable(stringVariable.Name, new StringVariable(variableValue));
+                    return Result.Success;
+                }
             }
 
             Console.Error.WriteLine($"Error: Left-hand side of assignment must be a variableItem");
