@@ -65,7 +65,7 @@ internal class VariableExpression : BasicExpression {
     }
 
     internal override object Evaluate(VariableStore variableStore) {
-        return variableStore.GetVariable(Name) ?? false;
+        return variableStore.GetVariable(Name);
     }
 }
 
@@ -78,8 +78,8 @@ internal class ArrayVariableExpression : VariableExpression {
         DimensionExpression = dimensionExpression;
     }
 
-    internal override object Evaluate(VariableStore variableStore) {
-        return variableStore.GetVariable(Name) ?? false;
+    internal override Variable Evaluate(VariableStore variableStore) {
+        return variableStore.GetVariable(Name);
     }
 }
 
@@ -226,7 +226,13 @@ internal class AssignmentExpression : BasicExpression {
     }
 
     internal override object Evaluate(VariableStore variableStore) {
-        return variableStore.SetVariable(Left.Name, Right.Evaluate(variableStore));
+        var result = Right.Evaluate(variableStore);
+
+        if (result is Variable variable) {
+            return variableStore.SetVariable(Left.Name, variable);
+        }
+
+        return result;
     }
 }
 
@@ -240,7 +246,13 @@ internal class IntegerAssignmentExpression : BasicExpression {
     }
 
     internal override object Evaluate(VariableStore variableStore) {
-        return variableStore.SetVariable(Left.Name, Right.Evaluate(variableStore));
+        var result = Right.Evaluate(variableStore);
+
+        if (result is Variable variable) {
+            return variableStore.SetVariable(Left.Name, variable);
+        }
+
+        return result;
     }
 }
 
@@ -254,7 +266,13 @@ internal class DoubleAssignmentExpression : BasicExpression {
     }
 
     internal override object Evaluate(VariableStore variableStore) {
-        return variableStore.SetVariable(Left.Name, Right.Evaluate(variableStore));
+        var result = Right.Evaluate(variableStore);
+
+        if (result is Variable variable) {
+            return variableStore.SetVariable(Left.Name, variable);
+        }
+
+        return result;
     }
 }
 
@@ -268,7 +286,13 @@ internal class StringAssignmentExpression : BasicExpression {
     }
 
     internal override object Evaluate(VariableStore variableStore) {
-        return variableStore.SetVariable(Left.Name, Right.Evaluate(variableStore));
+        var result = Right.Evaluate(variableStore);
+
+        if (result is Variable variable) {
+            return variableStore.SetVariable(Left.Name, variable);
+        }
+
+        return result;
     }
 }
 

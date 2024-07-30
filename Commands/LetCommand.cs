@@ -4,8 +4,8 @@ using ClifferBasic.Services;
 
 namespace ClifferBasic.Commands;
 
-[Command("let", "Assign a value to a variable")]
-[Argument(typeof(IEnumerable<string>), "args", "The assignment variable", Cliffer.ArgumentArity.ZeroOrMore)]
+[Command("let", "Assign a value to a variableItem")]
+[Argument(typeof(IEnumerable<string>), "args", "The assignment variableItem", Cliffer.ArgumentArity.ZeroOrMore)]
 internal class LetCommand {
     public int Execute(
         IEnumerable<string> args,
@@ -25,28 +25,16 @@ internal class LetCommand {
 
             if (binaryExpression.Left is ArrayVariableExpression arrayVariableExpression) {
                 variableExpression = arrayVariableExpression.VariableExpression;
-                var dimensionExpression = arrayVariableExpression.DimensionExpression;
+                var indices = variableStore.GetArrayIndices(arrayVariableExpression);
+                var variable = variableStore.GetVariable(arrayVariableExpression.Name);
 
-                if (dimensionExpression != null) {
-                    var dimensionArgs = arrayVariableExpression.DimensionExpression.Evaluate(variableStore);
-                    var dimensions = new List<int>();
 
-                    if (dimensionArgs is double singleDimension) {
-                        dimensions.Add((int)singleDimension);
-                    }
-                    else if (dimensionArgs is List<object> dimensionList) {
-                        foreach (var dimension in dimensionList) {
-                            if (dimension is BasicExpression listExpression) {
-                                var dimensionEval = listExpression.Evaluate(variableStore);
-                                var dimensionValue = Convert.ToInt32(dimensionEval);
-                                dimensions.Add(Convert.ToInt32(dimensionValue));
-                            }
-                            else if (dimension is double listDimension) {
-                                var dimensionValue = Convert.ToInt32(listDimension);
-                                dimensions.Add(dimensionValue);
-                            }
-                        }
-                    }
+                if (variable is ArrayVariable arrayVariable) {
+                    var variableItem = arrayVariable.GetVariable(indices);
+                    variableItem.SetValue(variableValue);
+                }
+                else {
+                    // TODO: Error
                 }
             }
             else if (binaryExpression.Left is VariableExpression leftExpression) {
@@ -68,7 +56,7 @@ internal class LetCommand {
                 }
             }
 
-            Console.Error.WriteLine($"Error: Left-hand side of assignment must be a variable");
+            Console.Error.WriteLine($"Error: Left-hand side of assignment must be a variableItem");
             return Result.Error;
         }
 

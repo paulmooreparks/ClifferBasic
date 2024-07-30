@@ -6,25 +6,25 @@ namespace ClifferBasic.Services;
 
 [DISingleton(typeof(VariableStore))]
 internal class VariableStore {
-    private readonly Dictionary<string, object> _variables = new();
+    private readonly Dictionary<string, Variable> _variables = new();
 
     public VariableStore() { 
     }
 
-    internal object SetVariable(string name, object value) {
+    internal object SetVariable(string name, Variable value) {
         _variables[name] = value;
         return value;
     }
 
-    internal object? GetVariable(string name) {
-        if (_variables.TryGetValue(name, out object? value)) {
+    internal Variable GetVariable(string name) {
+        if (_variables.TryGetValue(name, out Variable? value)) {
             return value;
         }
 
-        return null;
+        throw new InvalidOperationException($"Error: Variable {name} does not exist");
     }
 
-    internal Dictionary<string, object> GetAllVariables() {
+    internal Dictionary<string, Variable> GetAllVariables() {
         return _variables;
     }
 
