@@ -39,23 +39,19 @@ internal class DimCommand {
                     }
                 }
 
-                foreach (var dimension in dimensions) {
-                    Console.WriteLine(dimension.ToString());
-                }
-
                 var variableExpression = arrayVariableExpression.VariableExpression;
 
-                if (variableExpression is DoubleVariableExpression doubleVariableExpression) {
+                if (variableExpression is DoubleVariableExpression) {
                     var arrayVariable = new DoubleArrayVariable(dimensions);
-                    variableStore.SetVariable(doubleVariableExpression.Name, arrayVariable);
+                    variableStore.SetVariable(variableExpression.Name, arrayVariable);
                 }
-                else if (variableExpression is IntegerVariableExpression integerVariableExpression) {
+                else if (variableExpression is IntegerVariableExpression) {
                     var arrayVariable = new IntegerArrayVariable(dimensions);
-                    variableStore.SetVariable(integerVariableExpression.Name, arrayVariable);
+                    variableStore.SetVariable(variableExpression.Name, arrayVariable);
                 }
-                else if (variableExpression is StringVariableExpression stringVariableExpression) {
+                else if (variableExpression is StringVariableExpression) {
                     var arrayVariable = new StringArrayVariable(dimensions);
-                    variableStore.SetVariable(stringVariableExpression.Name, arrayVariable);
+                    variableStore.SetVariable(variableExpression.Name, arrayVariable);
                 }
                 else {
                     Console.Error.WriteLine($"Error: Invalid variable name");

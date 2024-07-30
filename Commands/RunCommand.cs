@@ -52,7 +52,7 @@ internal class RunCommand {
                 var commandName = parseResult.CommandResult.Command.Name;
 
                 if (string.Equals("end", commandName)) {
-                    await parseResult.CommandResult.Command.InvokeAsync(string.Empty);
+                    await parseResult.CommandResult.Command.InvokeAsync(Array.Empty<string>());
                     return Result.Success;
                 }
 

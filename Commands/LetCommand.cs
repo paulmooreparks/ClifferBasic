@@ -20,27 +20,59 @@ internal class LetCommand {
         var element = syntaxParser.ParseArgs(args);
 
         if (element is BinaryExpression binaryExpression && binaryExpression.Operator.Lexeme == "=") {
-            if (binaryExpression.Left is DoubleVariableExpression doubleVariable) {
-                var variableValue = binaryExpression.Right.Evaluate(variableStore);
-                variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(variableValue));
-                return Result.Success;
+            var variableValue = binaryExpression.Right.Evaluate(variableStore);
+            VariableExpression? variableExpression = null;
+
+            if (binaryExpression.Left is ArrayVariableExpression arrayVariableExpression) {
+                variableExpression = arrayVariableExpression.VariableExpression;
+                var dimensionExpression = arrayVariableExpression.DimensionExpression;
+
+                if (dimensionExpression != null) {
+                    var dimensionArgs = arrayVariableExpression.DimensionExpression.Evaluate(variableStore);
+                    var dimensions = new List<int>();
+
+                    if (dimensionArgs is double singleDimension) {
+                        dimensions.Add((int)singleDimension);
+                    }
+                    else if (dimensionArgs is List<object> dimensionList) {
+                        foreach (var dimension in dimensionList) {
+                            if (dimension is BasicExpression listExpression) {
+                                var dimensionEval = listExpression.Evaluate(variableStore);
+                                var dimensionValue = Convert.ToInt32(dimensionEval);
+                                dimensions.Add(Convert.ToInt32(dimensionValue));
+                            }
+                            else if (dimension is double listDimension) {
+                                var dimensionValue = Convert.ToInt32(listDimension);
+                                dimensions.Add(dimensionValue);
+                            }
+                        }
+                    }
+                }
             }
-            else if (binaryExpression.Left is IntegerVariableExpression integerVariable) {
-                var variableValue = binaryExpression.Right.Evaluate(variableStore);
-                variableStore.SetVariable(integerVariable.Name, new IntegerVariable(variableValue));
-                return Result.Success;
+            else if (binaryExpression.Left is VariableExpression leftExpression) {
+                variableExpression = leftExpression;
             }
-            else if (binaryExpression.Left is StringVariableExpression stringVariable) {
-                var variableValue = binaryExpression.Right.Evaluate(variableStore);
-                variableStore.SetVariable(stringVariable.Name, new StringVariable(variableValue));
-                return Result.Success;
+
+            if (variableExpression is not null) {
+                if (variableExpression is DoubleVariableExpression doubleVariable) {
+                    variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(variableValue));
+                    return Result.Success;
+                }
+                else if (binaryExpression.Left is IntegerVariableExpression integerVariable) {
+                    variableStore.SetVariable(integerVariable.Name, new IntegerVariable(variableValue));
+                    return Result.Success;
+                }
+                else if (binaryExpression.Left is StringVariableExpression stringVariable) {
+                    variableStore.SetVariable(stringVariable.Name, new StringVariable(variableValue));
+                    return Result.Success;
+                }
             }
 
             Console.Error.WriteLine($"Error: Left-hand side of assignment must be a variable");
             return Result.Error;
         }
 
-        Console.Error.WriteLine($"Error: Invalid assignment element");
+        Console.Error.WriteLine($"Error: Invalid assignment expression");
         return Result.Error;
     }
 }

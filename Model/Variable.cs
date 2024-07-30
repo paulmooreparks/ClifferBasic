@@ -1,17 +1,15 @@
 ﻿namespace ClifferBasic.Model;
 
-internal class Variable {
-    internal Type Type { get; }
+internal abstract class Variable<T> {
+    internal T Value { get; set; }
 
-    internal Variable(Type type) {
-        Type = type;
+    internal Variable(T value) {
+        Value = value;
     }
 }
 
-internal class NumericVariable : Variable {
-    internal object Value { get; set; }
-
-    public NumericVariable(Type type, object value) : base(type) {
+internal class NumericVariable<T> : Variable<T> {
+    public NumericVariable(T value) : base(value) {
         Value = value;
     }
 
@@ -21,55 +19,51 @@ internal class NumericVariable : Variable {
 
     internal double ToDouble() => Convert.ToDouble(Value);
 
-    public override string? ToString() => Value.ToString();
+    public override string? ToString() => Value?.ToString() ?? string.Empty;
 }
 
-internal class BooleanVariable : NumericVariable {
-    internal BooleanVariable(object value) : base(typeof(bool), value) { }
+internal class BooleanVariable : NumericVariable<bool> {
+    internal BooleanVariable(object value) : base(Convert.ToBoolean(value)) { }
 }
 
-internal class IntegerVariable : NumericVariable {
-    internal IntegerVariable(object value) : base(typeof(int), value) { }
+internal class IntegerVariable : NumericVariable<int> {
+    internal IntegerVariable(object value) : base(Convert.ToInt32(value)) { }
 }
 
-internal class DoubleVariable : NumericVariable {
-    internal DoubleVariable(object value) : base(typeof(double), value) { }
+internal class DoubleVariable : NumericVariable<double> {
+    internal DoubleVariable(object value) : base(Convert.ToDouble(value)) { }
 }
 
-internal class StringVariable : Variable {
-    internal string Value { get; set; }
-
-    internal StringVariable(string value) : base(typeof(string)) {
-        Value = value;
+internal class StringVariable : Variable<string> {
+    internal StringVariable(string value) : base(value) {
     }
 
-    internal StringVariable(object value) : base(typeof(string)) {
-        Value = value?.ToString() ?? string.Empty;
+    internal StringVariable(object value) : base(value?.ToString() ?? string.Empty) {
     }
 
     public override string? ToString() => Value;
 }
 
-internal class ArrayVariable : Variable {
+internal class ArrayVariable<T> {
     internal List<int> Dimensions { get; }
     internal Array Values { get; }
 
-    internal ArrayVariable(Type type, List<int> dimensions) : base(type) { 
+    internal ArrayVariable(List<int> dimensions) { 
         Dimensions = dimensions;
-        Values = Array.CreateInstance(type, dimensions.ToArray());
+        Values = Array.CreateInstance(typeof(T), dimensions.ToArray());
     }
 
-    internal virtual object GetVariable(params int[] indices) {
-        return Values.GetValue(indices)!;
+    internal virtual T GetVariable(params int[] indices) {
+        return (T)Values.GetValue(indices)!;
     }
 
-    internal void SetVariable(object variable, params int[] indices) {
+    internal void SetVariable(T variable, params int[] indices) {
         Values.SetValue(variable, indices);
     }
 }
 
-internal class DoubleArrayVariable : ArrayVariable {
-    internal DoubleArrayVariable(List<int> dimensions) : base(typeof(DoubleVariable), dimensions) {
+internal class DoubleArrayVariable : ArrayVariable<DoubleVariable> {
+    internal DoubleArrayVariable(List<int> dimensions) : base(dimensions) {
     }
 
     internal double GetValue(params int[] indices) {
@@ -78,8 +72,8 @@ internal class DoubleArrayVariable : ArrayVariable {
     }
 }
 
-internal class IntegerArrayVariable : ArrayVariable {
-    internal IntegerArrayVariable(List<int> dimensions) : base(typeof(IntegerVariable), dimensions) {
+internal class IntegerArrayVariable : ArrayVariable<IntegerVariable> {
+    internal IntegerArrayVariable(List<int> dimensions) : base(dimensions) {
     }
 
     internal int GetValue(params int[] indices) {
@@ -88,8 +82,8 @@ internal class IntegerArrayVariable : ArrayVariable {
     }
 }
 
-internal class StringArrayVariable : ArrayVariable {
-    internal StringArrayVariable(List<int> dimensions) : base(typeof(StringVariable), dimensions) {
+internal class StringArrayVariable : ArrayVariable<StringVariable> {
+    internal StringArrayVariable(List<int> dimensions) : base(dimensions) {
     }
 
     internal string GetValue(params int[] indices) {
