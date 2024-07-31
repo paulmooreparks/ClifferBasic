@@ -28,7 +28,6 @@ internal class LetCommand {
                 var indices = variableStore.GetArrayIndices(arrayVariableExpression);
                 var variable = variableStore.GetVariable(arrayVariableExpression.Name);
 
-
                 if (variable is ArrayVariable arrayVariable) {
                     if (arrayVariable is DoubleArrayVariable doubleArrayVariable) {
                         doubleArrayVariable.SetValue(variableValue, indices);
@@ -41,9 +40,6 @@ internal class LetCommand {
                     else if (arrayVariable is StringArrayVariable stringArrayVariable) {
                         stringArrayVariable.SetValue(variableValue, indices);
                         return Result.Success;
-                    }
-                    else {
-                        // TODO: Error
                     }
                 }
                 else {

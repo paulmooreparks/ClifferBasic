@@ -52,17 +52,38 @@ internal class InputCommand {
             }
 
             if (input != null) {
-                if (variableExpression is DoubleVariableExpression doubleVariable) {
-                    variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(input));
-                    return Result.Success;
+                if (variableExpression is ArrayVariableExpression arrayVariableExpression) {
+                    var indices = variableStore.GetArrayIndices(arrayVariableExpression);
+                    var variable = variableStore.GetVariable(arrayVariableExpression.Name);
+
+                    if (variable is ArrayVariable arrayVariable) {
+                        if (arrayVariable is DoubleArrayVariable doubleArrayVariable) {
+                            doubleArrayVariable.SetValue(input, indices);
+                            return Result.Success;
+                        }
+                        else if (arrayVariable is IntegerArrayVariable intArrayVariable) {
+                            intArrayVariable.SetValue(input, indices);
+                            return Result.Success;
+                        }
+                        else if (arrayVariable is StringArrayVariable stringArrayVariable) {
+                            stringArrayVariable.SetValue(input, indices);
+                            return Result.Success;
+                        }
+                    }
                 }
-                else if (variableExpression is IntegerVariableExpression integerVariable) {
-                    variableStore.SetVariable(integerVariable.Name, new IntegerVariable(input));
-                    return Result.Success;
-                }
-                else if (variableExpression is StringVariableExpression stringVariable) {
-                    variableStore.SetVariable(stringVariable.Name, new StringVariable(input));
-                    return Result.Success;
+                else {
+                    if (variableExpression is DoubleVariableExpression doubleVariable) {
+                        variableStore.SetVariable(doubleVariable.Name, new DoubleVariable(input));
+                        return Result.Success;
+                    }
+                    else if (variableExpression is IntegerVariableExpression integerVariable) {
+                        variableStore.SetVariable(integerVariable.Name, new IntegerVariable(input));
+                        return Result.Success;
+                    }
+                    else if (variableExpression is StringVariableExpression stringVariable) {
+                        variableStore.SetVariable(stringVariable.Name, new StringVariable(input));
+                        return Result.Success;
+                    }
                 }
 
                 Console.Error.WriteLine($"Error: Invalid variable element");

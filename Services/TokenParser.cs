@@ -279,7 +279,6 @@ internal class TokenParser {
             SyntaxElement element = Element();
 
             if (element is BasicExpression toValue) {
-                Advance();
                 return new ToKeyword(keyword, toValue);
             }
 
