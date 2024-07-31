@@ -78,7 +78,7 @@ internal class ArrayVariableExpression : VariableExpression {
         DimensionExpression = dimensionExpression;
     }
 
-    internal override Variable Evaluate(VariableStore variableStore) {
+    internal override object Evaluate(VariableStore variableStore) {
         var variable = variableStore.GetVariable(VariableExpression.Name);
         var dimension = DimensionExpression.Evaluate(variableStore);
 
@@ -92,13 +92,13 @@ internal class ArrayVariableExpression : VariableExpression {
             }
 
             if (variable is DoubleArrayVariable doubleArrayVariable) {
-                return doubleArrayVariable.GetVariable(dimensionList.ToArray());
+                return doubleArrayVariable.GetValue(dimensionList.ToArray());
             }
             else if (variable is IntegerArrayVariable intArrayVariable) {
-                return intArrayVariable.GetVariable(dimensionList.ToArray());
+                return intArrayVariable.GetValue(dimensionList.ToArray());
             }
             else if (variable is StringArrayVariable stringArrayVariable) {
-                return stringArrayVariable.GetVariable(dimensionList.ToArray());
+                return stringArrayVariable.GetValue(dimensionList.ToArray());
             }
         }
 
@@ -526,7 +526,8 @@ internal class BinaryExpression : BasicExpression {
                 },
                 _ => throw new Exception($"Invalid type: {Right}")
             },
-            _ => throw new Exception($"Invalid type: {Left}")
+            _ => 
+            throw new Exception($"Invalid type: {Left}")
         };
 
         return result.Evaluate(variableStore);
