@@ -2,6 +2,7 @@
 using System.CommandLine;
 using ClifferBasic.Services;
 using Cliffer;
+using System.Reflection;
 
 namespace ClifferBasic;
 
@@ -9,7 +10,12 @@ internal class BasicReplContext : Cliffer.DefaultReplContext {
     private readonly CommandSplitter _splitter = Utility.GetService<CommandSplitter>()!;
     private readonly ProgramService _programService = Utility.GetService<ProgramService>()!;
 
-    public override string GetTitleMessage() => "Cliffer Basic";
+    public override string GetTitleMessage() {
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        Version? version = assembly.GetName().Version;
+        string versionString = version?.ToString() ?? "Unknown";
+        return $"Cliffer Basic v{versionString}";
+    }
 
     public override string GetPrompt(Command command, InvocationContext context) => "> ";
 
