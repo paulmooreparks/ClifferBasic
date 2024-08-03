@@ -186,6 +186,10 @@ internal class Tokenizer {
                             Expand();
                             tokenList.Add(new Token(CurrentString, TokenType.LessThanOrEqual));
                         }
+                        if (Peek == '>') {
+                            Expand();
+                            tokenList.Add(new Token(CurrentString, TokenType.NotEqual));
+                        }
                         else {
                             tokenList.Add(new Token(CurrentString, TokenType.LessThan));
                         }

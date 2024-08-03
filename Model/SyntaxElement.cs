@@ -401,9 +401,37 @@ internal class BinaryExpression : BasicExpression {
             null => throw new Exception($"Invalid type: {Left}"),
             BinaryExpression lvalue => new BinaryExpression(new NumericExpression(lvalue.Evaluate(variableStore)), Operator, Right),
             ParentheticalExpression lvalue => new BinaryExpression(new NumericExpression(lvalue.Evaluate(variableStore)), Operator, Right),
+            ArrayVariableExpression lvalue => new BinaryExpression(lvalue.VariableExpression, Operator, Right),
+            StringExpression lvalue => Right switch {
+                StringExpression rvalue => Operator.Type switch {
+                    TokenType.Equal => new BooleanExpression(lvalue.ToString() == rvalue.ToString()),
+                    TokenType.NotEqual => new BooleanExpression(lvalue.ToString() != rvalue.ToString()),
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+                },
+                StringVariableExpression rvalue => Operator.Type switch {
+                    TokenType.Equal => new BooleanExpression(lvalue.ToString() == rvalue.ToString(variableStore)),
+                    TokenType.NotEqual => new BooleanExpression(lvalue.ToString() != rvalue.ToString(variableStore)),
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+                },
+                _ => throw new Exception($"Invalid type: {Right}")
+            },
+            StringVariableExpression lvalue => Right switch {
+                StringExpression rvalue => Operator.Type switch {
+                    TokenType.Equal => new BooleanExpression(lvalue.ToString() == rvalue.ToString()),
+                    TokenType.NotEqual => new BooleanExpression(lvalue.ToString() != rvalue.ToString()),
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+                },
+                StringVariableExpression rvalue => Operator.Type switch {
+                    TokenType.Equal => new BooleanExpression(lvalue.ToString() == rvalue.ToString(variableStore)),
+                    TokenType.NotEqual => new BooleanExpression(lvalue.ToString() != rvalue.ToString(variableStore)),
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+                },
+                _ => throw new Exception($"Invalid type: {Right}")
+            },
             NumericExpression lvalue => Right switch {
                 BinaryExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
                 ParentheticalExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+                ArrayVariableExpression rvalue => new BinaryExpression(lvalue, Operator, rvalue.VariableExpression),
                 NumericExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToDouble() + rvalue.ToDouble()),
                     TokenType.Minus => new NumericExpression(lvalue.ToDouble() - rvalue.ToDouble()),
@@ -441,13 +469,14 @@ internal class BinaryExpression : BasicExpression {
                     TokenType.GreaterThanOrEqual => new BooleanExpression(lvalue.ToDouble() >= rvalue.ToDouble(variableStore)),
                     TokenType.LessThan => new BooleanExpression(lvalue.ToDouble() < rvalue.ToDouble(variableStore)),
                     TokenType.LessThanOrEqual => new BooleanExpression(lvalue.ToDouble() <= rvalue.ToDouble(variableStore)),
-                    _ => throw new NotImplementedException()
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
                 },
                 _ => throw new Exception($"Invalid type: {Right}")
             },
             IntegerVariableExpression lvalue => Right switch {
                 BinaryExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
                 ParentheticalExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+                ArrayVariableExpression rvalue => new BinaryExpression(lvalue, Operator, rvalue.VariableExpression),
                 NumericExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToInt(variableStore) + rvalue.ToInt()),
                     TokenType.Minus => new NumericExpression(lvalue.ToInt(variableStore) - rvalue.ToInt()),
@@ -490,13 +519,14 @@ internal class BinaryExpression : BasicExpression {
                 BooleanExpression rvalue => Operator.Type switch {
                     TokenType.Equal => new BooleanExpression(lvalue.ToBool(variableStore) == rvalue.ToBool()),
                     TokenType.NotEqual => new BooleanExpression(lvalue.ToBool(variableStore) != rvalue.ToBool()),
-                    _ => throw new NotImplementedException()
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
                 },
                 _ => throw new Exception($"Invalid type: {Right}")
             },
             DoubleVariableExpression lvalue => Right switch {
                 BinaryExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
                 ParentheticalExpression rvalue => new BinaryExpression(lvalue, Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+                ArrayVariableExpression rvalue => new BinaryExpression(lvalue, Operator, rvalue.VariableExpression),
                 NumericExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToDouble(variableStore) + rvalue.ToDouble()),
                     TokenType.Minus => new NumericExpression(lvalue.ToDouble(variableStore) - rvalue.ToDouble()),
@@ -539,12 +569,11 @@ internal class BinaryExpression : BasicExpression {
                 BooleanExpression rvalue => Operator.Type switch {
                     TokenType.Equal => new BooleanExpression(lvalue.ToBool(variableStore) == rvalue.ToBool()),
                     TokenType.NotEqual => new BooleanExpression(lvalue.ToBool(variableStore) != rvalue.ToBool()),
-                    _ => throw new NotImplementedException()
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
                 },
                 _ => throw new Exception($"Invalid type: {Right}")
             },
-            _ => 
-            throw new Exception($"Invalid type: {Left}")
+            _ => throw new Exception($"Invalid type: {Left}")
         };
 
         return result.Evaluate(variableStore);
