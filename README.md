@@ -9,7 +9,7 @@ To use ClifferBasic as a REPL, similar to a Commodore 64 or Apple ][ environment
 
 ```text
 paul@BARN:~$ clifferbasic
-Cliffer Basic
+Cliffer Basic v0.3.0.0
 bye, exit, goodbye  Exit the application
 help, ?             Show help and usage information
 
@@ -33,6 +33,10 @@ Hello, World!
 - Extensible command structure using the [Cliffer CLI library](https://github.com/paulmooreparks/Cliffer).
 
 ## Recent Changes
+### 3 August 2024
+* Added support for string comparison
+* Added array variables
+
 ### 28 July 2024
 * Added input, chgdir, chgvol, listdir, and printdir commands.
 * Added line-concatenation operator (;) to input and print commands.
@@ -51,7 +55,6 @@ ClifferBasic
 
 ## Roadmap
 
-- Add support for arrays via the `dim` command.
 - Add `data` and `read` commands.
 - Implement `:` command separator.
 - Add structured-programming constructs like `while`/`wend`.
