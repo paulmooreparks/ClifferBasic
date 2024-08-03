@@ -288,9 +288,13 @@ internal class TokenParser {
         if (Peek?.Type == TokenType.Step) {
             var keyword = Peek.Literal!.ToString()!;
             Advance();
-            double stepValue = Convert.ToDouble(Peek.Literal);
-            Advance();
-            return new StepExpression(stepValue);
+            SyntaxElement element = Element();
+
+            if (element is BasicExpression stepValue) {
+                return new StepExpression(stepValue);
+            }
+
+            return element;
         }
 
         if (Peek?.Type == TokenType.Keyword) {

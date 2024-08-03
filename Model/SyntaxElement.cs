@@ -216,14 +216,14 @@ internal class ToKeyword : KeywordElement {
 }
 
 internal class StepExpression : BasicExpression {
-    internal double StepValue { get; }
+    internal BasicExpression StepValue { get; }
 
-    internal StepExpression(double stepValue) : base() { 
+    internal StepExpression(BasicExpression stepValue) : base() { 
         StepValue = stepValue;
     }
 
     internal override object Evaluate(VariableStore variableStore) {
-        return StepValue;
+        return StepValue.Evaluate(variableStore);
     }
 }
 
@@ -331,25 +331,6 @@ internal class ParentheticalExpression : BasicExpression {
     }
 }
 
-internal class UnaryExpression : BasicExpression {
-    internal Token? Operator { get; }
-    internal SyntaxElement Right { get; }
-
-    internal UnaryExpression(Token operatorToken, SyntaxElement right) {
-        Operator = operatorToken;
-        Right = right;
-    }
-
-    internal override object Evaluate(VariableStore variableStore) {
-        var result = Right switch {
-            BasicExpression rvalue => rvalue.Evaluate(variableStore),
-            _ => throw new NotImplementedException()
-        };
-
-        return result;
-    }
-}
-
 internal class ListExpression : BasicExpression {
     internal List<BasicExpression> Expressions { get; }
 
@@ -365,6 +346,42 @@ internal class ListExpression : BasicExpression {
         }
 
         return results;
+    }
+}
+
+internal class UnaryExpression : BasicExpression {
+    internal Token Operator { get; }
+    internal SyntaxElement Right { get; }
+
+    internal UnaryExpression(Token operatorToken, SyntaxElement right) {
+        Operator = operatorToken;
+        Right = right;
+    }
+
+    internal override object Evaluate(VariableStore variableStore) {
+        BasicExpression result = Right switch {
+            null => throw new Exception($"Invalid type: {Right}"),
+            BinaryExpression rvalue => new UnaryExpression(Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+            ParentheticalExpression rvalue => new UnaryExpression(Operator, new NumericExpression(rvalue.Evaluate(variableStore))),
+            NumericExpression rvalue => Operator.Type switch {
+                TokenType.Plus => new NumericExpression(+rvalue.ToDouble()),
+                TokenType.Minus => new NumericExpression(-rvalue.ToDouble()),
+                _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+            },
+            IntegerVariableExpression rvalue => Operator.Type switch {
+                TokenType.Plus => new NumericExpression(+rvalue.ToInt(variableStore)),
+                TokenType.Minus => new NumericExpression(-rvalue.ToInt(variableStore)),
+                _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+            },
+            DoubleVariableExpression rvalue => Operator.Type switch {
+                TokenType.Plus => new NumericExpression(+rvalue.ToDouble(variableStore)),
+                TokenType.Minus => new NumericExpression(-rvalue.ToDouble(variableStore)),
+                _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
+            },
+            _ => throw new Exception($"Invalid type: {Right}")
+        };
+
+        return result.Evaluate(variableStore);
     }
 }
 
@@ -411,7 +428,7 @@ internal class BinaryExpression : BasicExpression {
                     TokenType.GreaterThanOrEqual => new BooleanExpression(lvalue.ToDouble() >= rvalue.ToInt(variableStore)),
                     TokenType.LessThan => new BooleanExpression(lvalue.ToDouble() < rvalue.ToInt(variableStore)),
                     TokenType.LessThanOrEqual => new BooleanExpression(lvalue.ToDouble() <= rvalue.ToInt(variableStore)),
-                    _ => throw new NotImplementedException()
+                    _ => throw new Exception($"Invalid operator: {Operator.Lexeme}")
                 },
                 DoubleVariableExpression rvalue => Operator.Type switch {
                     TokenType.Plus => new NumericExpression(lvalue.ToDouble() + rvalue.ToDouble(variableStore)),

@@ -79,7 +79,7 @@ internal class ForCommand {
                 element = syntaxParser.Continue();
 
                 if (element is StepExpression stepExpression) {
-                    var step = stepExpression.StepValue;
+                    var step = Convert.ToDouble(stepExpression.Evaluate(variableStore));
                     incrementAmount = step;
                 }
 
