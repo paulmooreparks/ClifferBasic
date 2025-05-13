@@ -6,21 +6,23 @@ using System.Reflection;
 
 namespace ClifferBasic;
 
-internal class BasicReplContext : Cliffer.DefaultReplContext {
+internal class BasicReplContext(Command currentCommand) : Cliffer.DefaultReplContext(currentCommand) {
     private readonly CommandSplitter _splitter = Utility.GetService<CommandSplitter>()!;
     private readonly ProgramService _programService = Utility.GetService<ProgramService>()!;
 
-    public override string GetTitleMessage() {
-        Assembly assembly = Assembly.GetExecutingAssembly();
-        Version? version = assembly.GetName().Version;
-        string versionString = version?.ToString() ?? "Unknown";
-        return $"Cliffer Basic v{versionString}";
+    public override string TitleMessage  {
+        get {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Version? version = assembly.GetName().Version;
+            string versionString = version?.ToString() ?? "Unknown";
+            return $"Cliffer Basic v{versionString}";
+        }
     }
 
     public override string GetPrompt(Command command, InvocationContext context) => "> ";
 
-    public override string[] GetExitCommands() => ["bye", "exit", "goodbye"];
-    public override string[] GetPopCommands() => [];
+    public override string[] ExitCommands => ["bye", "exit", "goodbye"];
+    public override string[] PopCommands => [];
 
     public override void OnEntry() {
         base.OnEntry();
